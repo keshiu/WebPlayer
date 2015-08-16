@@ -1,0 +1,53 @@
+body {
+  font-size: 100%;
+  font: normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif;
+  margin: 10px;
+  padding: 0;
+  width: 855px;
+}
+
+header {
+  font: normal normal 18px Verdana, Geneva, Arial, Helvetica, sans-serif;
+  margin-right: 270px;
+  min-height: 40px;
+  text-align: center;
+}
+
+.name_and_author {
+  padding: 4px 3px;
+}
+
+main {
+  overflow: auto;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.player {
+  float: left;
+  text-align: center;
+  overflow: auto;
+  width: 585px;
+}
+
+.buttons {
+  min-height: 50px;
+  padding: 40px 40px;
+}
+
+.download {
+  float: left;
+  padding-top: 15px;
+  text-align: center;
+}
+
+.play_stop {
+  float: right;
+  float-text-align: center;
+}
+
+.equalizer {
+  float: right;
+  padding: 5px 5px;
+  width: 260px;
+}
