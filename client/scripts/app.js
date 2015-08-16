@@ -1,13 +1,22 @@
 "use strict";
 var main = function () {
     var fileList = {},
-    audioContext, audioBuffer, source, selfFile;
-    
-    var handleFiles = function () { //обрабатывает файл, загруженный с помощью input
+    canvasContext = null,
+    canvasWidth = 512,
+    canvasHeight = 120,
+    audioContext, audioBuffer, source, canvas, analyser, selfFile;
+
+    var createCanvas = function ( w, h ) { // создает поле для визаулизации
+        var newCanvas = document.createElement('canvas');
+        newCanvas.width  = w;     
+        newCanvas.height = h;
+        return newCanvas;
+    }
+    var handleFiles = function () { // обрабатывает файл, загруженный с помощью input
     	fileList = this.files;
     	selfFile = fileList[0];
     }
-    var readFileToArrayBuffer = function (file, successCallback) { //преобразует входящий файл в arrayBuffer
+    var readFileToArrayBuffer = function (file, successCallback) { // преобразует входящий файл в arrayBuffer
         var reader = new FileReader();
         reader.onload = function () {
             var buffer = reader.result;
@@ -20,13 +29,52 @@ var main = function () {
         }
         reader.readAsArrayBuffer(file);
     }
+    var visualize = function () { // рисует визуализацию
+        var WIDTH = canvas.width,
+        HEIGHT = canvas.height,
+        drawVisual,
+        bufferLength = analyser.frequencyBinCount,
+        dataArray = new Uint8Array(bufferLength);
+
+        analyser.fftSize = 2048;
+        canvasContext.clearRect(0, 0, WIDTH, HEIGHT); // очищаем поле
+        function draw() {
+            drawVisual = requestAnimationFrame(draw);
+            analyser.getByteTimeDomainData(dataArray);
+            canvasContext.fillStyle = 'rgb(255, 255, 255)'; // задаем цвет фона
+            canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+            canvasContext.lineWidth = 2;
+            canvasContext.strokeStyle = 'rgb(47, 79, 79)';
+            canvasContext.beginPath();
+
+            var sliceWidth = WIDTH * 1.0 / bufferLength,
+            x = 0;
+            
+            for (var i = 0; i < bufferLength; i++) {
+                var v = dataArray[i] / 128.0,
+                y = v * HEIGHT/2;
+                if (i === 0) {
+                    canvasContext.moveTo(x, y);
+                } else {
+                    canvasContext.lineTo(x, y);
+                }
+                x += sliceWidth;
+            }
+            canvasContext.lineTo(canvas.width, canvas.height/2);
+            canvasContext.stroke();
+        }
+        draw();
+    }
     var decodeData = function (arrayBuffer) { // декодирует загруженный файл
 	    audioContext.decodeAudioData(arrayBuffer, function(buffer) {
             audioBuffer = buffer;
             source = audioContext.createBufferSource();
+            analyser = audioContext.createAnalyser(); // создаем анализатор
             source.buffer = audioBuffer;
             source.loop = false;
-            source.connect(audioContext.destination);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            visualize();
             playSound();
         }, function(e) {
             console.log('Error decoding file ' + e); 
@@ -43,6 +91,9 @@ var main = function () {
         try {
             window.AudioContext = window.AudioContext||window.webkitAudioContext;
             audioContext = new AudioContext();
+            canvas = createCanvas (canvasWidth, canvasHeight);
+            $("#visualField").append(canvas);
+            canvasContext = canvas.getContext('2d');
         }
         catch(e) {
             alert('Opps.. Your browser do not support audio API');
