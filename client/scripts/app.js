@@ -4,7 +4,7 @@ var main = function () {
     canvasContext = null,
     canvasWidth = 512,
     canvasHeight = 120,
-    audioContext, audioBuffer, source, canvas, analyser, selfFile;
+    audioContext, audioBuffer, source, canvas, analyser, selfFile, trackArtist, trackTitle;
 
     var createCanvas = function ( w, h ) { // создает поле для визаулизации
         var newCanvas = document.createElement('canvas');
@@ -19,8 +19,23 @@ var main = function () {
     var readFileToArrayBuffer = function (file, successCallback) { // преобразует входящий файл в arrayBuffer
         var reader = new FileReader();
         reader.onload = function () {
-            var buffer = reader.result;
-            successCallback(buffer); // в случае удачи вызовет функцию декодирования
+            var buffer = reader.result,
+            dv = new jDataView(reader.result);
+ 
+            // "TAG" starts at byte -128 from EOF.
+            if (dv.getString(3, dv.byteLength - 128) == 'TAG') {
+                trackTitle = dv.getString(30, dv.tell()),
+                trackArtist = dv.getString(30, dv.tell());
+            } else {
+                trackTitle = 'Unknown';
+                trackArtist = 'Unknown';
+            }
+            $('header .name_and_author').empty();
+
+            var $p = $("<p>").text(trackArtist + " - " + trackTitle);
+
+            $('header .name_and_author').append($p);
+            successCallback(buffer) // в случае успеха вызываем функцию декодирования
         }
         reader.onerror = function (evt) {
             if (evt.target.error.code == evt.target.error.NOT_READABLE_ERR) {
@@ -49,7 +64,7 @@ var main = function () {
 
             var sliceWidth = WIDTH * 1.0 / bufferLength,
             x = 0;
-            
+
             for (var i = 0; i < bufferLength; i++) {
                 var v = dataArray[i] / 128.0,
                 y = v * HEIGHT/2;
