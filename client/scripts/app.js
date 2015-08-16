@@ -6,7 +6,6 @@ var main = function () {
     var handleFiles = function () { //обрабатывает файл, загруженный с помощью input
     	fileList = this.files;
     	selfFile = fileList[0];
-        readFileToArrayBuffer(selfFile, decodeData);
     }
     var readFileToArrayBuffer = function (file, successCallback) { //преобразует входящий файл в arrayBuffer
         var reader = new FileReader();
@@ -28,6 +27,7 @@ var main = function () {
             source.buffer = audioBuffer;
             source.loop = false;
             source.connect(audioContext.destination);
+            playSound();
         }, function(e) {
             console.log('Error decoding file ' + e); 
         });
@@ -50,10 +50,10 @@ var main = function () {
     }, false);
 
     var inputElement = document.getElementById("download");
-    
+
     inputElement.addEventListener("change", handleFiles, false);
     $("#play").click(function () {
-        playSound();
+        readFileToArrayBuffer(selfFile, decodeData);
     });
     $("#stop").click(function () {
     	stopPlayingSound();
