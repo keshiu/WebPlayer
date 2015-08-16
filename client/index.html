@@ -12,22 +12,24 @@
     <main>
         <div class="player">
             <div class="visualisation" id="visualField"></div>
-            <div class="buttons">
-                <div class="download">
-                    <input type="file" id="download" accept="audio/*">
-                </div>
-                <div class="play_stop">
-                    <button id="play" style="height: 44px; width: 75px;">Play</button>
-                    <button id="stop" style="height: 44px; width: 75px;">Stop</button>
-                </div>
+            <div class="equalizer">
+                <p><input type="radio" name="playtype" id="classic"> Classic</p>
+                <p><input type="radio" name="playtype" id="jazz"> Jazz</p>
+                <p><input type="radio" name="playtype" id="normal" checked="checked"> Normal</p>
+                <p><input type="radio" name="playtype" id="pop"> Pop</p>
+                <p><input type="radio" name="playtype" id="rock"> Rock</p>
             </div>
         </div>
-        <div class="equalizer">
-            <p><input type="radio" name="playtype" id="classic"> Classic</p>
-            <p><input type="radio" name="playtype" id="jazz"> Jazz</p>
-            <p><input type="radio" name="playtype" id="normal" checked="checked"> Normal</p>
-            <p><input type="radio" name="playtype" id="pop"> Pop</p>
-            <p><input type="radio" name="playtype" id="rock"> Rock</p>
+        <div class="buttons">
+            <button id="play" style="height: 44px; width: 75px;">Play</button>
+            <button id="stop" style="height: 44px; width: 75px;">Stop</button>
+        </div>
+        <div class="download">
+            <div class="instruct">
+                <input type="file" id="download" accept="audio/*">
+                <p>Или перетащите файл сюда ---></p>
+            </div>
+            <div class="drop_zone" id="drop_zone_id"></div>
         </div>	
     </main>
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>

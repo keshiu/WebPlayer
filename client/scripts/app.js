@@ -13,9 +13,29 @@ var main = function () {
         return newCanvas;
     }
     var handleFiles = function () { // обрабатывает файл, загруженный с помощью input
-    	fileList = this.files;
+        var fileList = this.files,
+        $p;
     	selfFile = fileList[0];
+        $p = $("<p>").text(selfFile.name);
+        $('main .drop_zone').empty();
+        $('main .drop_zone').append($p);
     }
+    var handleFileSelect = function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        var fileList = evt.dataTransfer.files; // FileList object.
+        selfFile = fileList[0];
+        var $p = $("<p>").text(selfFile.name);
+        $('main .drop_zone').empty();
+        $('main .drop_zone').append($p);
+  }
+
+  function handleDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  }
     var readFileToArrayBuffer = function (file, successCallback) { // преобразует входящий файл в arrayBuffer
         var reader = new FileReader();
         reader.onload = function () {
@@ -124,5 +144,8 @@ var main = function () {
     $("#stop").click(function () {
     	stopPlayingSound();
     });
+    var dropZone = document.getElementById('drop_zone_id');
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', handleFileSelect, false);
 }
 $(document).ready(main);
